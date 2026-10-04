@@ -20,7 +20,7 @@ public class ProductController {
     }
     
     @GetMapping
-    public String list(Model model) {
+    public String viewProducts(Model model) {
         model.addAttribute("products", productService.getAllProducts());
         return "products";
     }
@@ -31,9 +31,9 @@ public class ProductController {
         return "product_form";
     }
 
-    @GetMapping ("/edit/{id}")
-    public String edit(@PathVariable Long id, Model model) {
-        Product product = productService.getProductById(id).orElseThrow(() -> new IllegalArgumentException("Product not found"));
+    @GetMapping ("/edit/{productId}")
+    public String edit(@PathVariable Long productId, Model model) {
+        Product product = productService.getProductById(productId).orElseThrow(() -> new IllegalArgumentException("Product not found"));
         model.addAttribute("product", product);
         return "product_form";
     }
@@ -44,9 +44,9 @@ public class ProductController {
         return "redirect:/products";
     }
 
-    @PostMapping ("/delete/{id}")
-    public String delete(@PathVariable Long id) {
-        productService.deleteProduct(id);
+    @PostMapping ("/delete/{productId}")
+    public String delete(@PathVariable Long productId) {
+        productService.deleteProduct(productId);
         return "redirect:/products";
     }
     
