@@ -1,5 +1,6 @@
 package dss.practicas.practica_1.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -7,7 +8,7 @@ import org.springframework.stereotype.Service;
 import dss.practicas.practica_1.model.Product;
 import dss.practicas.practica_1.repository.ProductRepo;
 
-@Service 
+@Service
 public class ProductService {
     private final ProductRepo productRepo;
 
@@ -15,7 +16,7 @@ public class ProductService {
         this.productRepo = productRepo;
     }
 
-    public Iterable<Product> getAllProducts() {
+    public List<Product> getAllProducts() {
         return productRepo.findAll();
     }
 
