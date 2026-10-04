@@ -21,7 +21,6 @@
                     <span th:text="${product.name}">Nombre del Producto</span>
                     <span th:text="${product.price}">Precio del Producto</span>
                     <form th:action="@{/cart/remove/{id}(id=${product.id})}" method="post">
-						<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
                         <button type="submit" class="btn btn-danger">Eliminar</button>
                     </form>
                 </li>
