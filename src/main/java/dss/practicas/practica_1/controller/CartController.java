@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import dss.practicas.practica_1.model.Product;
 import dss.practicas.practica_1.service.CartService;
 import dss.practicas.practica_1.service.ProductService;
 
@@ -31,8 +30,8 @@ public class CartController {
 
     @PostMapping ("/add/{productId}")
     public String addProductToCart(@PathVariable Long productId) {
-        Product product = productService.getProductById(productId).orElseThrow(() -> new IllegalArgumentException("Product not found"));
-        cartService.addProduct(product);
+        productService.getProductById(productId).orElseThrow(() -> new IllegalArgumentException("Product not found"));
+        cartService.addProduct(productId);
         return "redirect:/cart";
     }
 

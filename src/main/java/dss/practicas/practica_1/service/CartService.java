@@ -12,18 +12,27 @@ import dss.practicas.practica_1.model.Product;
 @SessionScope 
 public class CartService {
     
-    private final List<Product> cartItems = new ArrayList<>();
+    private final List<Long> cartItemsIds = new ArrayList<>();
+    private final ProductService productService;
 
-    public void addProduct(Product product) {
-        cartItems.add(product);
+    public CartService (ProductService productService){
+        this.productService = productService;
+    }
+
+    public void addProduct(Long productId) {
+        cartItemsIds.add(productId);
     }
 
     public void removeProduct(Long productId) {
-        cartItems.removeIf(p -> p.getId().equals(productId));
+        cartItemsIds.removeIf(x -> productId.equals(x));
     }
 
+    // Revisar luego con findAllById en caso de implementar stock de productos
     public List<Product> getProducts() {
-        return cartItems;
+        return cartItemsIds.stream()
+                .map(id -> productService.getProductById(id))
+                .flatMap(opt -> opt.stream())
+                .toList();
     }
 
 }
