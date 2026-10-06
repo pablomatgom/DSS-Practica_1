@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+<!--
+    Barra de navegación común a todas las páginas.
+    Uso: <nav th:replace="~{fragments/navbar :: navbar('products')}"></nav>
+    Parámetro "active": sección resaltada ('home', 'products', 'cart', 'admin' o cualquier otro valor para ninguna).
+-->
+<nav th:fragment="navbar(active)" class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm">
+    <div class="container">
+
+        <a class="navbar-brand fw-bold" th:href="@{/}">
+            <i class="bi bi-shop me-2"></i>TiendaDSS
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#mainNav" aria-controls="mainNav"
+                aria-expanded="false" aria-label="Abrir menú">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="mainNav">
+
+            <!--/* Enlaces de navegación */-->
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" th:classappend="${active == 'home'} ? 'active'" th:href="@{/}">Inicio</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:classappend="${active == 'products'} ? 'active'" th:href="@{/products}">Catálogo</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:classappend="${active == 'cart'} ? 'active'" th:href="@{/cart}">
+                        <i class="bi bi-cart3"></i> Carrito
+                    </a>
+                </li>
+                <!--/* Solo visible para el rol ADMIN */-->
+                <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+                    <a class="nav-link" th:classappend="${active == 'admin'} ? 'active'" th:href="@{/admin}">
+                        <i class="bi bi-gear"></i> Administración
+                    </a>
+                </li>
+            </ul>
+
+            <!--/* Zona de usuario */-->
+            <div class="d-flex align-items-center gap-2">
+                <th:block sec:authorize="isAnonymous()">
+                    <a class="btn btn-outline-light btn-sm" th:href="@{/login}">
+                        <i class="bi bi-box-arrow-in-right"></i> Iniciar sesión
+                    </a>
+                </th:block>
+
+                <th:block sec:authorize="isAuthenticated()">
+                    <span class="navbar-text text-light me-1">
+                        <i class="bi bi-person-circle"></i> <span sec:authentication="name">usuario</span>
+                    </span>
+                    <!--/* El logout exige POST (y th:action añade el token CSRF) */-->
+                    <form th:action="@{/logout}" method="post" class="m-0">
+                        <button type="submit" class="btn btn-outline-light btn-sm">
+                            <i class="bi bi-box-arrow-right"></i> Cerrar sesión
+                        </button>
+                    </form>
+                </th:block>
+            </div>
+        </div>
+    </div>
+</nav>
+</body>
+</html>

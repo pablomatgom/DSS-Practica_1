@@ -1,0 +1,32 @@
+/* Estilos propios de TiendaDSS. Bootstrap hace casi todo el trabajo. */
+
+body {
+    background-color: #f6f7fb;
+}
+
+/* Cabecera destacada de la página de inicio */
+.hero {
+    background: linear-gradient(135deg, #212529 0%, #3a4a63 100%);
+    color: #fff;
+    border-radius: 1rem;
+}
+
+/* Tarjetas de producto */
+.product-card {
+    transition: transform .15s ease, box-shadow .15s ease;
+}
+
+.product-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .12);
+}
+
+.product-icon {
+    font-size: 2.5rem;
+    color: #6c757d;
+}
+
+.price {
+    font-size: 1.25rem;
+    font-weight: 700;
+}

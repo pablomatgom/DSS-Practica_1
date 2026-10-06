@@ -39,7 +39,11 @@ public class SecurityConfig {
                 // Allow REST API (ALL METHODS: GET, POST, DELETE…)
                 // .requestMatchers("/api/**").permitAll()
 
-                // Public static pages
+                // Static resources (css, js, images) must be reachable without login
+                .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
+                    .permitAll()
+
+                // Public pages
                 .requestMatchers("/", "/index", "/cart/**")
                     .permitAll()
 
