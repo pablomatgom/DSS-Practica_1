@@ -44,7 +44,7 @@ public class SecurityConfig {
                     .permitAll()
 
                 // Public pages
-                .requestMatchers("/", "/index", "/cart/**")
+                .requestMatchers("/", "/index", "/cart/**", "/error")
                     .permitAll()
 
                 // Public product browsing (MVC)
@@ -60,7 +60,7 @@ public class SecurityConfig {
                     .hasRole("ADMIN")
                 
                 // H2 console
-                .requestMatchers(PathRequest.toH2Console()).permitAll() 
+                .requestMatchers(PathRequest.toH2Console()).hasRole("ADMIN") 
 
                 // Everything else requires login
                 .anyRequest().authenticated()

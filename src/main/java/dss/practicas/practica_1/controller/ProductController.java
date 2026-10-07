@@ -1,5 +1,6 @@
 package dss.practicas.practica_1.controller;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -7,6 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.server.ResponseStatusException;
 
 import dss.practicas.practica_1.model.Product;
 import dss.practicas.practica_1.service.ProductService;
@@ -44,7 +46,7 @@ public class ProductController {
 
     @GetMapping ("/edit/{productId}")
     public String edit(@PathVariable Long productId, Model model) {
-        Product product = productService.getProductById(productId).orElseThrow(() -> new IllegalArgumentException("Product not found"));
+        Product product = productService.getProductById(productId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found"));
         model.addAttribute("product", product);
         return "product_form";
     }
