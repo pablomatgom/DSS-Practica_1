@@ -30,3 +30,42 @@ body {
     font-size: 1.25rem;
     font-weight: 700;
 }
+
+/* Barra de filtros del catálogo */
+.filter-card {
+    border-radius: 1rem;
+}
+
+.filter-card .input-group-lg > .form-control,
+.filter-card .input-group-lg > .input-group-text {
+    border-color: #dee2e6;
+}
+
+.filter-card .form-control:focus {
+    box-shadow: none;
+    border-color: #86b7fe;
+}
+
+.filter-price {
+    width: 8.5rem;
+}
+
+/* Etiquetas de filtros activos: se quitan con un clic */
+.filter-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    padding: .3rem .75rem;
+    border: 1px solid #b6d4fe;
+    border-radius: 50rem;
+    background: #e7f1ff;
+    color: #0a58ca;
+    font-size: .85rem;
+    text-decoration: none;
+    transition: background-color .15s ease;
+}
+
+.filter-chip:hover {
+    background: #cfe2ff;
+    color: #084298;
+}

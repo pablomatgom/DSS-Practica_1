@@ -16,10 +16,86 @@
             </a>
         </div>
 
-        <!--/* Catálogo vacío */-->
+        <!--/* Filtros de búsqueda: formulario GET, así la búsqueda queda en la URL y se puede compartir o recargar */-->
+        <form th:action="@{/products}" method="get" class="filter-card card border-0 shadow-sm mb-3">
+            <div class="card-body p-3 p-md-4">
+
+                <!--/* Fila 1: buscador por nombre, el filtro principal */-->
+                <div class="input-group input-group-lg">
+                    <span class="input-group-text bg-white border-end-0 text-muted">
+                        <i class="bi bi-search"></i>
+                    </span>
+                    <label for="searcher" class="visually-hidden">Buscar por nombre</label>
+                    <input type="search" id="searcher" name="searcher" th:value="${searcher}" class="form-control border-start-0 ps-0"
+                           placeholder="Buscar productos por nombre…">
+                    <button type="submit" class="btn btn-primary px-4">Buscar</button>
+                </div>
+
+                <!--/* Fila 2: filtros secundarios (rango de precio y stock) */-->
+                <div class="d-flex flex-wrap align-items-center gap-3 mt-3">
+                    <span class="small fw-semibold text-muted text-uppercase">
+                        <i class="bi bi-funnel"></i> Filtros
+                    </span>
+
+                    <div class="d-flex align-items-center gap-2">
+                        <label for="minPrice" class="visually-hidden">Precio mínimo</label>
+                        <div class="input-group input-group-sm filter-price">
+                            <span class="input-group-text">€</span>
+                            <input type="number" id="minPrice" name="minPrice" th:value="${minPrice}"
+                                   min="0" step="0.01" class="form-control" placeholder="Mín.">
+                        </div>
+                        <span class="text-muted">–</span>
+                        <label for="maxPrice" class="visually-hidden">Precio máximo</label>
+                        <div class="input-group input-group-sm filter-price">
+                            <span class="input-group-text">€</span>
+                            <input type="number" id="maxPrice" name="maxPrice" th:value="${maxPrice}"
+                                   min="0" step="0.01" class="form-control" placeholder="Máx.">
+                        </div>
+                    </div>
+
+                    <div class="form-check form-switch mb-0">
+                        <input class="form-check-input" type="checkbox" role="switch" id="inStock" name="inStock"
+                               value="true" th:checked="${inStock}">
+                        <label class="form-check-label" for="inStock">Solo con stock</label>
+                    </div>
+
+                    <a th:if="${filtered}" th:href="@{/products}"
+                       class="btn btn-sm btn-link text-decoration-none text-muted ms-auto">
+                        <i class="bi bi-x-circle"></i> Limpiar
+                    </a>
+                </div>
+            </div>
+        </form>
+
+        <!--/* Resultados y filtros activos: cada etiqueta quita solo su filtro y conserva los demás */-->
+        <div th:if="${filtered}" class="d-flex flex-wrap align-items-center gap-2 mb-4">
+            <span class="text-muted small fw-semibold"
+                  th:text="${#lists.size(products)} + ' ' + (${#lists.size(products)} == 1 ? 'resultado' : 'resultados')">N resultados</span>
+
+            <a th:if="${searcher != null and !searcher.isBlank()}" class="filter-chip"
+               th:href="@{/products(minPrice=${minPrice},maxPrice=${maxPrice},inStock=${inStock ? 'true' : null})}">
+                <i class="bi bi-search"></i> <span th:text="${searcher}">texto</span> <i class="bi bi-x-lg"></i>
+            </a>
+            <a th:if="${minPrice != null}" class="filter-chip"
+               th:href="@{/products(searcher=${searcher},maxPrice=${maxPrice},inStock=${inStock ? 'true' : null})}">
+                <span th:text="'Desde ' + ${#numbers.formatDecimal(minPrice, 1, 'POINT', 2, 'COMMA')} + ' €'">Desde 0 €</span> <i class="bi bi-x-lg"></i>
+            </a>
+            <a th:if="${maxPrice != null}" class="filter-chip"
+               th:href="@{/products(searcher=${searcher},minPrice=${minPrice},inStock=${inStock ? 'true' : null})}">
+                <span th:text="'Hasta ' + ${#numbers.formatDecimal(maxPrice, 1, 'POINT', 2, 'COMMA')} + ' €'">Hasta 0 €</span> <i class="bi bi-x-lg"></i>
+            </a>
+            <a th:if="${inStock}" class="filter-chip"
+               th:href="@{/products(searcher=${searcher},minPrice=${minPrice},maxPrice=${maxPrice})}">
+                <i class="bi bi-box-seam"></i> Solo con stock <i class="bi bi-x-lg"></i>
+            </a>
+        </div>
+
+        <!--/* Sin productos: catálogo vacío, o filtros que no encuentran nada */-->
         <div th:if="${#lists.isEmpty(products)}" class="text-center text-muted py-5">
             <i class="bi bi-box-seam display-3"></i>
-            <p class="mt-3 mb-0">Todavía no hay productos en el catálogo.</p>
+            <p th:unless="${filtered}" class="mt-3 mb-0">Todavía no hay productos en el catálogo.</p>
+            <p th:if="${filtered}" class="mt-3 mb-0">Ningún producto coincide con los filtros.</p>
+            <a th:if="${filtered}" th:href="@{/products}" class="btn btn-outline-secondary btn-sm mt-3">Limpiar filtros</a>
         </div>
 
         <!--/* Cuadrícula de productos */-->
