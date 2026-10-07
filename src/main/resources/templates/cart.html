@@ -8,6 +8,20 @@
 
         <h1 class="h2 mb-4">Mi carrito</h1>
 
+        <!--/* Avisos que llegan tras añadir o actualizar (flash attributes del controlador) */-->
+        <div th:if="${message}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${message}">Mensaje</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+        </div>
+        <div th:if="${warning}" class="alert alert-warning alert-dismissible fade show" role="alert">
+            <span th:text="${warning}">Aviso</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+        </div>
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${error}">Error</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+        </div>
+
         <!--/* Carrito vacío */-->
         <div th:if="${#lists.isEmpty(cartItems)}" class="text-center text-muted py-5">
             <i class="bi bi-cart-x display-3"></i>
@@ -26,16 +40,38 @@
                             <tr>
                                 <th>Producto</th>
                                 <th class="text-end">Precio</th>
-                                <th class="text-end"></th>
+                                <th class="text-center">Cantidad</th>
+                                <th class="text-end">Subtotal</th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr th:each="product : ${cartItems}">
-                                <td th:text="${product.name}">Nombre del producto</td>
+                            <tr th:each="item : ${cartItems}">
+                                <td>
+                                    <span th:text="${item.product.name}">Nombre del producto</span>
+                                    <!--/* El stock pudo bajar después de añadirlo al carrito */-->
+                                    <div th:if="${item.exceedsStock}" class="small text-danger">
+                                        <i class="bi bi-exclamation-triangle"></i>
+                                        <span th:text="'Solo quedan ' + ${item.product.stock} + ' unidades en stock'">Solo quedan N unidades</span>
+                                    </div>
+                                </td>
                                 <td class="text-end"
-                                    th:text="${#numbers.formatDecimal(product.price, 1, 'POINT', 2, 'COMMA')} + ' €'">0,00 €</td>
+                                    th:text="${#numbers.formatDecimal(item.product.price, 1, 'POINT', 2, 'COMMA')} + ' €'">0,00 €</td>
+                                <td>
+                                    <form th:action="@{/cart/update/{id}(id=${item.product.id})}" method="post"
+                                          class="m-0 d-flex justify-content-center gap-1">
+                                        <input type="number" name="quantity" th:value="${item.quantity}" min="1"
+                                               th:max="${item.product.stock}" class="form-control form-control-sm"
+                                               style="width: 4.5rem;" aria-label="Cantidad">
+                                        <button type="submit" class="btn btn-outline-secondary btn-sm" title="Actualizar cantidad">
+                                            <i class="bi bi-check-lg"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                                <td class="text-end"
+                                    th:text="${#numbers.formatDecimal(item.subtotal, 1, 'POINT', 2, 'COMMA')} + ' €'">0,00 €</td>
                                 <td class="text-end">
-                                    <form th:action="@{/cart/remove/{id}(id=${product.id})}" method="post" class="m-0">
+                                    <form th:action="@{/cart/remove/{id}(id=${item.product.id})}" method="post" class="m-0">
                                         <button type="submit" class="btn btn-outline-danger btn-sm">
                                             <i class="bi bi-trash"></i> Quitar
                                         </button>
@@ -45,9 +81,9 @@
                         </tbody>
                         <tfoot>
                             <tr class="table-light">
-                                <th>Total</th>
+                                <th colspan="3">Total</th>
                                 <th class="text-end price"
-                                    th:text="${#numbers.formatDecimal(#aggregates.sum(cartItems.![price]), 1, 'POINT', 2, 'COMMA')} + ' €'">0,00 €</th>
+                                    th:text="${#numbers.formatDecimal(#aggregates.sum(cartItems.![subtotal]), 1, 'POINT', 2, 'COMMA')} + ' €'">0,00 €</th>
                                 <th></th>
                             </tr>
                         </tfoot>

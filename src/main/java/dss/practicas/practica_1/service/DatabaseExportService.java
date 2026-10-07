@@ -25,10 +25,11 @@ public class DatabaseExportService {
                 ? "NULL"
                 : "'" + product.getName().replace("'", "''") + "'";
 
-            sql.append("INSERT INTO product (id, name, price) VALUES (")
+            sql.append("INSERT INTO product (id, name, price, stock) VALUES (")
                 .append(product.getId()).append(", ")
                 .append(name).append(", ")
-                .append(product.getPrice())
+                .append(product.getPrice()).append(", ")
+                .append(product.getStock())
                 .append(");\n");
     }
 

@@ -29,28 +29,43 @@
                     <div class="card-body text-center">
                         <i class="bi bi-box-seam product-icon"></i>
                         <h5 class="card-title mt-2" th:text="${product.name}">Nombre del producto</h5>
-                        <p class="price text-primary mb-0"
+                        <p class="price text-primary mb-1"
                            th:text="${#numbers.formatDecimal(product.price, 1, 'POINT', 2, 'COMMA')} + ' €'">0,00 €</p>
+
+                        <!--/* Disponibilidad: agotado, pocas unidades (5 o menos) o en stock */-->
+                        <p class="mb-0">
+                            <span th:if="${product.stock <= 0}" class="badge bg-danger">Agotado</span>
+                            <span th:if="${product.stock > 0 and product.stock <= 5}" class="badge bg-warning text-dark"
+                                  th:text="'Pocas unidades: ' + ${product.stock}">Pocas unidades</span>
+                            <span th:if="${product.stock > 5}" class="badge bg-success"
+                                  th:text="'En stock: ' + ${product.stock}">En stock</span>
+                        </p>
                     </div>
 
                     <div class="card-footer bg-transparent border-0 pb-3">
-                        <div class="d-flex flex-wrap justify-content-center gap-2">
 
-                            <!--/* Cualquier visitante */-->
-                            <form th:action="@{/cart/add/{id}(id=${product.id})}" method="post" class="m-0">
-                                <button type="submit" class="btn btn-primary btn-sm">
+                        <!--/* Fila 1: cualquier visitante */-->
+                        <div class="d-flex justify-content-center">
+                            <form th:action="@{/cart/add/{id}(id=${product.id})}" method="post" class="m-0 d-flex gap-2">
+                                <input type="number" name="quantity" value="1" min="1" th:max="${product.stock}"
+                                       class="form-control form-control-sm" style="width: 4.5rem;"
+                                       aria-label="Cantidad" th:disabled="${product.stock <= 0}">
+                                <button type="submit" class="btn btn-primary btn-sm" th:disabled="${product.stock <= 0}">
                                     <i class="bi bi-cart-plus"></i> Añadir al carrito
                                 </button>
                             </form>
+                        </div>
 
-                            <!--/* Solo ADMIN y MANAGER */-->
-                            <a sec:authorize="hasAnyRole('ADMIN','MANAGER')"
-                               th:href="@{/products/edit/{id}(id=${product.id})}"
+                        <!--/* Fila 2 (debajo): gestión. Solo se genera para ADMIN y MANAGER, así el resto no ve un hueco vacío */-->
+                        <div sec:authorize="hasAnyRole('ADMIN','MANAGER')"
+                             class="d-flex flex-wrap justify-content-center gap-2 mt-2">
+
+                            <a th:href="@{/products/edit/{id}(id=${product.id})}"
                                class="btn btn-outline-warning btn-sm">
                                 <i class="bi bi-pencil"></i> Editar
                             </a>
 
-                            <!--/* Solo ADMIN */-->
+                            <!--/* Eliminar: solo ADMIN */-->
                             <form sec:authorize="hasRole('ADMIN')"
                                   th:action="@{/products/delete/{id}(id=${product.id})}" method="post" class="m-0"
                                   onsubmit="return confirm('¿Seguro que quieres eliminar este producto?');">
